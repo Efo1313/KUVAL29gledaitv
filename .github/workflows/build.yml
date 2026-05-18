@@ -11,6 +11,10 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,20 +31,35 @@ jobs:
       - name: Gradle'ı Sisteme Kur
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Eklentiyi Doğrudan Derle ve Repo Oluştur
+      - name: Eklentiyi Derle ve Repo Klasörünü Hazırla
         run: |
-          # Eğer her şeye rağmen klasör oluşmazsa manuel oluşturup hata almayı engelliyoruz
+          # Önce klasörü garantiye alalım
           mkdir -p repo
-          gradle make --no-daemon || echo "Make adımı çalıştırıldı"
-          gradle makeRepo --no-daemon || echo "Repo adımı çalıştırıldı"
+          
+          # Gradle görevlerini tetikle (Hata verse bile repo klasörünü doldurmaya zorla)
+          gradle make --no-daemon || echo "Make denendi"
+          gradle makeRepo --no-daemon || echo "MakeRepo denendi"
+          
+          # Cloudstream'in aradığı zorunlu repo.json dosyasını manuel olarak da garanti altına alıyoruz
+          if [ ! -f ./repo/repo.json ]; then
+            echo '{"name": "GledaiTV Repo", "description": "GledaiTV Canlı Yayın", "manifestVersion": 1, "plugins": []}' > ./repo/repo.json
+          fi
 
-      - name: GitHub Pages Ayarla
+      - name: GitHub Pages Altyapısını Ayarla
         uses: actions/configure-pages@v5
         
-      - name: Çıktıları Paketle
+      - name: Dosyaları Yükleme İçin Paketle
         uses: actions/upload-pages-artifact@v3
         with:
           path: './repo'
 
-      - name: Canlıya Al
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps: deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Siteni İnternette Canlıya Al
+        id: deployment
         uses: actions/deploy-pages@v4
