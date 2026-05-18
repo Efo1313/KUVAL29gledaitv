@@ -6,6 +6,11 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,11 +27,24 @@ jobs:
       - name: Derleme Yetkisi Ver
         run: chmod +x gradlew || true
 
-      - name: Eklentiyi Derle
+      - name: Eklentiyi Derle ve Repo Oluştur
         run: |
           if [ -f ./gradlew ]; then
             ./gradlew make
+            # Cloudstream için repo.json oluşturma komutu
+            ./gradlew makeRepo
           else
-            echo "Gradlew bulunamadı, genel gradle deneniyor..."
-            gradle make || echo "Lütfen build.gradle dosyalarınızı kontrol edin."
+            echo "Gradlew bulunamadı."
+            exit 1
           fi
+
+      - name: GitHub Pages'a Yükle
+        uses: actions/configure-pages@v3
+        
+      - name: Çıktıları Paketle
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: './repo'
+
+      - name: Canlıya Al
+        uses: actions/deploy-pages@v1
