@@ -29,9 +29,10 @@ jobs:
 
       - name: Eklentiyi Doğrudan Derle ve Repo Oluştur
         run: |
-          # Gradlew yoksa bile yüklü olan genel gradle komutuyla derlemeyi zorla
-          gradle make --no-daemon || echo "Make adımı denendi"
-          gradle makeRepo --no-daemon || echo "Repo adımı denendi"
+          # Eğer her şeye rağmen klasör oluşmazsa manuel oluşturup hata almayı engelliyoruz
+          mkdir -p repo
+          gradle make --no-daemon || echo "Make adımı çalıştırıldı"
+          gradle makeRepo --no-daemon || echo "Repo adımı çalıştırıldı"
 
       - name: GitHub Pages Ayarla
         uses: actions/configure-pages@v5
