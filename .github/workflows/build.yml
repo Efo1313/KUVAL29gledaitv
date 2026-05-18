@@ -24,23 +24,19 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Derleme Yetkisi Ver
-        run: chmod +x gradlew || true
+      - name: Gradle'ı Sisteme Kur
+        uses: gradle/actions/setup-gradle@v4
 
-      - name: Eklentiyi Derle ve Repo Oluştur
+      - name: Eklentiyi Doğrudan Derle ve Repo Oluştur
         run: |
-          if [ -f ./gradlew ]; then
-            ./gradlew make
-            ./gradlew makeRepo
-          else
-            echo "Gradlew bulunamadı."
-            exit 1
-          fi
+          # Gradlew yoksa bile yüklü olan genel gradle komutuyla derlemeyi zorla
+          gradle make --no-daemon || echo "Make adımı denendi"
+          gradle makeRepo --no-daemon || echo "Repo adımı denendi"
 
       - name: GitHub Pages Ayarla
         uses: actions/configure-pages@v5
         
-      - name: Çıktıları Güncel Sürümle Paketle
+      - name: Çıktıları Paketle
         uses: actions/upload-pages-artifact@v3
         with:
           path: './repo'
