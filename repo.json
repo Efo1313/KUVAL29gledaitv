@@ -1,0 +1,20 @@
+{
+  "name": "GledaiTV Eklenti Deposu",
+  "description": "GledaiTV Canlı Yayın Kanalları",
+  "manifestVersion": 1,
+  "plugins": [
+    {
+      "id": "com.lagradost.gledaitvplugin",
+      "name": "GledaiTV",
+      "version": 1,
+      "status": 1,
+      "apiName": "GledaiTV",
+      "authors": ["Efo1313"],
+      "description": "GledaiTV Canlı Yayın",
+      "tvTypes": ["Live"],
+      "language": "bg",
+      "iconUrl": "https://www.gledaitv.fan/favicon.ico",
+      "url": "https://raw.githubusercontent.com/Efo1313/KUVAL29gledaitv/main/src/main/kotlin/GledaiTVProvider.kt"
+    }
+  ]
+}
