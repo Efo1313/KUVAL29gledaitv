@@ -16,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Depoyu Klonla
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Java Ortamını Kur
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
@@ -31,20 +31,19 @@ jobs:
         run: |
           if [ -f ./gradlew ]; then
             ./gradlew make
-            # Cloudstream için repo.json oluşturma komutu
             ./gradlew makeRepo
           else
             echo "Gradlew bulunamadı."
             exit 1
           fi
 
-      - name: GitHub Pages'a Yükle
-        uses: actions/configure-pages@v3
+      - name: GitHub Pages Ayarla
+        uses: actions/configure-pages@v5
         
-      - name: Çıktıları Paketle
-        uses: actions/upload-pages-artifact@v1
+      - name: Çıktıları Güncel Sürümle Paketle
+        uses: actions/upload-pages-artifact@v3
         with:
           path: './repo'
 
       - name: Canlıya Al
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
